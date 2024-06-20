@@ -12,3 +12,7 @@
  *  - contact
  *  - Address
  */
+
+ # React Hooks
+
+- normal JS utiliy functions given by React to us.
