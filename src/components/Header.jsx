@@ -1,5 +1,5 @@
 import {LOGO_URL} from '../utilities/constants'
-export const Header = () => {
+const Header = () => {
     return (
       <div className="header">
         <div className="logo-container">
