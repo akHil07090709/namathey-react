@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { resList } from "../utilities/staticData";
 import FoodCard from "./FoodCard";
+import { SWIGGY_API } from "../utilities/constants";
+import Shimmer from './Shimmer';
 
 const Body = () => {
-  const [listOfRestaurants, setListOfRestaurants] = useState(resList)
+  const [listOfRestaurants, setListOfRestaurants] = useState([])
   const handleFilterTopRatedRestaurants = () => {
     const updatedFilteredList = listOfRestaurants?.filter(item => item?.avgRating > 4.5)
     setListOfRestaurants(updatedFilteredList)
@@ -14,29 +15,28 @@ const Body = () => {
   })
 
   const fetchData = async () => {
-    const data = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9351929&lng=77.62448069999999&page_type=DESKTOP_WEB_LISTING")
+    const data = await fetch(SWIGGY_API)
     const json = await data.json()
-    console.log("Swiggy API Response:",json)
+    const restaurantData = json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    setListOfRestaurants(restaurantData)
   }
 
-    return (
-      <div className="body">
+  // Conditional Rendering
+    return listOfRestaurants?.length === 0 ? <Shimmer />: <div className="body">
         <div className="filter">
           <button className="filter-btn" onClick={handleFilterTopRatedRestaurants}>Top Rated Restaurants</button>
         </div>
         <div className="res-container">
           {listOfRestaurants?.map((restaurant) => (
             <FoodCard
-              key={restaurant.id}
-              name={restaurant?.name}
-              cuisine={restaurant?.cuisines?.join(', ')}
-              rating={restaurant?.avgRating}
-              cloudinaryImageId={restaurant?.cloudinaryImageId}
+              key={restaurant?.info?.id}
+              name={restaurant?.info?.name}
+              cuisine={restaurant?.info?.cuisines?.join(', ')}
+              rating={restaurant?.info?.avgRating}
+              cloudinaryImageId={restaurant?.info?.cloudinaryImageId}
             />
           ))}
         </div>
       </div>
-    );
-  };
-
+}
 export default Body
